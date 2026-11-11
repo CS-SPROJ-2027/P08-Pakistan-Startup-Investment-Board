@@ -129,3 +129,44 @@ td button {
 button.danger {
   background-color: #b00020;
 }
+
+.progress {
+  height: 10px;
+  background-color: #e0e0e0;
+  border-radius: 5px;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #1b7a3a;
+  border-radius: 5px;
+}
+
+.row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.row button {
+  margin-top: 4px;
+}
+
+h3 {
+  margin-top: 0;
+}
+
+.table-header span {
+  flex: 1;
+  font-weight: bold;
+}
+
+.table-header .header-spacer {
+  flex: 0 0 80px;
+}
+
+button.secondary {
+  background-color: white;
+  color: #1f4e79;
+  border: 1px solid #1f4e79;
+}

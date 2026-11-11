@@ -11,7 +11,7 @@ function Home() {
   useEffect(() => {
     apiRequest('/health')
       .then(() => setServerStatus('connected'))
-      .catch((err) => setServerStatus(err.message));
+      .catch((err: Error) => setServerStatus(err.message));
   }, []);
 
   return (

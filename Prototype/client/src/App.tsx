@@ -12,11 +12,13 @@ import Register from './pages/Register';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import AdminUsers from './pages/AdminUsers';
+import StartupProfile from './pages/StartupProfile';
 import NotFound from './pages/NotFound';
 import { getSavedUser, clearLogin } from './auth';
+import { User } from './types';
 
 function App() {
-  const [user, setUser] = useState(getSavedUser());
+  const [user, setUser] = useState<User | null>(getSavedUser());
   const navigate = useNavigate();
 
   function handleLogout() {
@@ -37,7 +39,7 @@ function App() {
             path="/dashboard"
             element={
               <ProtectedRoute user={user}>
-                <Dashboard user={user} />
+                <Dashboard user={user as User} />
               </ProtectedRoute>
             }
           />
@@ -46,6 +48,14 @@ function App() {
             element={
               <ProtectedRoute user={user} roles={['admin']}>
                 <AdminUsers />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute user={user} roles={['founder']}>
+                <StartupProfile />
               </ProtectedRoute>
             }
           />

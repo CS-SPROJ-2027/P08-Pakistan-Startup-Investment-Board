@@ -3,7 +3,7 @@
  * The user picks a role and fills in their details.
  * All fields are required. Founders enter their company, others their organisation.
  */
-import { useState } from 'react';
+import { useState, ChangeEvent, FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { apiRequest } from '../api';
 
@@ -22,11 +22,11 @@ function Register() {
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
 
-  function handleChange(e) {
+  function handleChange(e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError('');
     setSuccess('');
@@ -42,7 +42,7 @@ function Register() {
       setSuccess(data.message);
       setForm(emptyForm);
     } catch (err) {
-      setError(err.message);
+      setError((err as Error).message);
     } finally {
       setLoading(false);
     }

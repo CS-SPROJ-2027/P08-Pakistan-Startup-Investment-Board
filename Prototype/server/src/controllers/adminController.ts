@@ -3,15 +3,17 @@
  * Lets the administrator see registrations and approve or reject them.
  * Each decision is saved with the admin's id and the time, and written to the log.
  */
-const pool = require('../config/db');
-const logger = require('../config/logger');
-const { AppError } = require('../middleware/errorHandler');
+import { Response, NextFunction } from 'express';
+import pool from '../config/db';
+import logger from '../config/logger';
+import { AppError } from '../middleware/errorHandler';
+import { AuthRequest } from '../middleware/auth';
 
 const STATUSES = ['pending', 'approved', 'rejected'];
 
-async function getUsers(req, res, next) {
+export async function getUsers(req: AuthRequest, res: Response, next: NextFunction) {
   try {
-    const status = req.query.status || 'pending';
+    const status = (req.query.status as string) || 'pending';
     if (!STATUSES.includes(status)) {
       throw new AppError(400, 'Invalid status filter');
     }
@@ -31,7 +33,7 @@ async function getUsers(req, res, next) {
   }
 }
 
-async function reviewUser(req, res, next) {
+export async function reviewUser(req: AuthRequest, res: Response, next: NextFunction) {
   try {
     const userId = Number(req.params.id);
     const { decision, reason } = req.body;
@@ -60,14 +62,12 @@ async function reviewUser(req, res, next) {
       `UPDATE users
        SET status = $1, rejection_reason = $2, reviewed_by = $3, reviewed_at = NOW()
        WHERE id = $4`,
-      [newStatus, decision === 'reject' ? reason.trim() : null, req.user.id, userId]
+      [newStatus, decision === 'reject' ? reason.trim() : null, req.user?.id, userId]
     );
 
-    logger.info(`Admin ${req.user.id} ${newStatus} account ${user.email}`);
+    logger.info(`Admin ${req.user?.id} ${newStatus} account ${user.email}`);
     res.json({ message: `Account ${newStatus}` });
   } catch (err) {
     next(err);
   }
 }
-
-module.exports = { getUsers, reviewUser };

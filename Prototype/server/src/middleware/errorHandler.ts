@@ -4,23 +4,28 @@
  * Errors with a status (e.g. 400, 404) show their own message;
  * unexpected errors are logged and a general message is returned.
  */
-const logger = require('../config/logger');
+import { Request, Response, NextFunction } from 'express';
+import logger from '../config/logger';
 
-class AppError extends Error {
-  constructor(status, message) {
+export class AppError extends Error {
+  status: number;
+  details?: object;
+
+  constructor(status: number, message: string, details?: object) {
     super(message);
     this.status = status;
+    this.details = details;
   }
 }
 
-function notFound(req, res, next) {
+export function notFound(req: Request, res: Response, next: NextFunction) {
   next(new AppError(404, `Route ${req.originalUrl} not found`));
 }
 
-// eslint-disable-next-line no-unused-vars
-function errorHandler(err, req, res, next) {
+// next is unused but Express needs all 4 parameters to treat this as an error handler
+export function errorHandler(err: any, req: Request, res: Response, next: NextFunction) {
   if (err instanceof AppError) {
-    return res.status(err.status).json({ error: err.message });
+    return res.status(err.status).json({ error: err.message, ...err.details });
   }
   if (err.type === 'entity.parse.failed') {
     return res.status(400).json({ error: 'Request body is not valid JSON' });
@@ -28,5 +33,3 @@ function errorHandler(err, req, res, next) {
   logger.error(err.stack || err.message);
   res.status(500).json({ error: 'Something went wrong on the server. Please try again.' });
 }
-
-module.exports = { AppError, notFound, errorHandler };

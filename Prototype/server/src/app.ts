@@ -1,15 +1,16 @@
 /**
  * Express app setup.
- * Registers middleware and API routes. Kept separate from index.js
+ * Registers middleware and API routes. Kept separate from index.ts
  * so the app can be started on its own or reused.
  */
-const express = require('express');
-const cors = require('cors');
-const path = require('path');
-const pool = require('./config/db');
-const { notFound, errorHandler } = require('./middleware/errorHandler');
-const authRoutes = require('./routes/authRoutes');
-const adminRoutes = require('./routes/adminRoutes');
+import express from 'express';
+import cors from 'cors';
+import path from 'path';
+import pool from './config/db';
+import { notFound, errorHandler } from './middleware/errorHandler';
+import authRoutes from './routes/authRoutes';
+import adminRoutes from './routes/adminRoutes';
+import profileRoutes from './routes/profileRoutes';
 
 const app = express();
 
@@ -28,11 +29,13 @@ app.get('/api/health', async (req, res, next) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/profile', profileRoutes);
 
 app.use('/api', notFound);
 
 // In production the built React app is served from client/dist
-const clientDist = path.join(__dirname, '../../client/dist');
+// (the server is started from the server folder, so client is one level up)
+const clientDist = path.join(process.cwd(), '../client/dist');
 app.use(express.static(clientDist));
 app.get('*', (req, res) => {
   res.sendFile(path.join(clientDist, 'index.html'));
@@ -40,4 +43,4 @@ app.get('*', (req, res) => {
 
 app.use(errorHandler);
 
-module.exports = app;
+export default app;

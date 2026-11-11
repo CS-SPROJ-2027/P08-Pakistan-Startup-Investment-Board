@@ -1,9 +1,9 @@
 /**
  * Routes for registration, login and the current user (UC-001).
  */
-const express = require('express');
-const { register, login, getMe } = require('../controllers/authController');
-const { verifyToken } = require('../middleware/auth');
+import express from 'express';
+import { register, login, getMe } from '../controllers/authController';
+import { verifyToken } from '../middleware/auth';
 
 const router = express.Router();
 
@@ -11,4 +11,4 @@ router.post('/register', register);
 router.post('/login', login);
 router.get('/me', verifyToken, getMe);
 
-module.exports = router;
+export default router;

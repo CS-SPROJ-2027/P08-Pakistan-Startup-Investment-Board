@@ -2,9 +2,9 @@
  * Server entry point.
  * Loads environment variables and starts the Express server.
  */
-require('dotenv').config();
-const app = require('./app');
-const logger = require('./config/logger');
+import 'dotenv/config';
+import app from './app';
+import logger from './config/logger';
 
 const PORT = process.env.PORT || 5000;
 

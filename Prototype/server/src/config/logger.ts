@@ -2,7 +2,7 @@
  * Logger.
  * Uses winston to print logs to the console and save errors to logs/error.log.
  */
-const winston = require('winston');
+import winston from 'winston';
 
 const logger = winston.createLogger({
   level: process.env.LOG_LEVEL || 'info',
@@ -16,4 +16,4 @@ const logger = winston.createLogger({
   ],
 });
 
-module.exports = logger;
+export default logger;

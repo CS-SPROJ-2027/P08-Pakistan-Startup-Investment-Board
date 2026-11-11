@@ -5,9 +5,22 @@
 import { useEffect, useState } from 'react';
 import { apiRequest } from '../api';
 
+interface PendingUser {
+  id: number;
+  full_name: string;
+  email: string;
+  role: string;
+  organisation: string;
+  status: string;
+  rejection_reason: string | null;
+  created_at: string;
+  reviewed_at: string | null;
+  reviewed_by_name: string | null;
+}
+
 function AdminUsers() {
   const [status, setStatus] = useState('pending');
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<PendingUser[]>([]);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
 
@@ -17,7 +30,7 @@ function AdminUsers() {
       const data = await apiRequest(`/admin/users?status=${status}`);
       setUsers(data.users);
     } catch (err) {
-      setError(err.message);
+      setError((err as Error).message);
     }
   }
 
@@ -25,8 +38,8 @@ function AdminUsers() {
     loadUsers();
   }, [status]);
 
-  async function reviewUser(user, decision) {
-    let reason = '';
+  async function reviewUser(user: PendingUser, decision: 'approve' | 'reject') {
+    let reason: string | null = '';
     if (decision === 'reject') {
       reason = window.prompt(`Reason for rejecting ${user.full_name}:`);
       if (reason === null) {
@@ -41,7 +54,7 @@ function AdminUsers() {
       setMessage(`${data.message}: ${user.email}`);
       loadUsers();
     } catch (err) {
-      setError(err.message);
+      setError((err as Error).message);
     }
   }
 
@@ -89,7 +102,7 @@ function AdminUsers() {
                     </>
                   ) : (
                     <>
-                      {new Date(user.reviewed_at).toLocaleString()} by {user.reviewed_by_name}
+                      {user.reviewed_at && new Date(user.reviewed_at).toLocaleString()} by {user.reviewed_by_name}
                       {user.rejection_reason && <div className="muted">Reason: {user.rejection_reason}</div>}
                     </>
                   )}

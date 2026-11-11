@@ -3,17 +3,19 @@
  * Handles registration, login and getting the logged in user's details.
  * New accounts start as "pending" and cannot log in until an admin approves them.
  */
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const pool = require('../config/db');
-const logger = require('../config/logger');
-const { AppError } = require('../middleware/errorHandler');
+import { Request, Response, NextFunction } from 'express';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import pool from '../config/db';
+import logger from '../config/logger';
+import { AppError } from '../middleware/errorHandler';
+import { AuthRequest } from '../middleware/auth';
 
 const ROLES = ['founder', 'investor', 'incubator'];
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // Returns an error message if the registration form is not valid, otherwise null
-function validateRegistration(data) {
+function validateRegistration(data: any): string | null {
   const { fullName, email, password, role, organisation } = data;
 
   // every field is required, and a value with only spaces counts as empty
@@ -36,7 +38,7 @@ function validateRegistration(data) {
   return null;
 }
 
-async function register(req, res, next) {
+export async function register(req: Request, res: Response, next: NextFunction) {
   try {
     const errorMessage = validateRegistration(req.body);
     if (errorMessage) {
@@ -67,7 +69,7 @@ async function register(req, res, next) {
   }
 }
 
-async function login(req, res, next) {
+export async function login(req: Request, res: Response, next: NextFunction) {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -87,7 +89,7 @@ async function login(req, res, next) {
       throw new AppError(403, `Your registration was rejected. Reason: ${user.rejection_reason}`);
     }
 
-    const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET as string, {
       expiresIn: '8h',
     });
 
@@ -101,11 +103,11 @@ async function login(req, res, next) {
   }
 }
 
-async function getMe(req, res, next) {
+export async function getMe(req: AuthRequest, res: Response, next: NextFunction) {
   try {
     const result = await pool.query(
       'SELECT id, full_name, email, role, organisation, status FROM users WHERE id = $1',
-      [req.user.id]
+      [req.user?.id]
     );
     const user = result.rows[0];
     if (!user || user.status !== 'approved') {
@@ -118,5 +120,3 @@ async function getMe(req, res, next) {
     next(err);
   }
 }
-
-module.exports = { register, login, getMe };

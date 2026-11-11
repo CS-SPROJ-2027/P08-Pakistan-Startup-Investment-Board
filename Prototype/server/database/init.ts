@@ -4,15 +4,15 @@
  * from ADMIN_EMAIL and ADMIN_PASSWORD in .env if it does not exist yet.
  * Usage: npm run db:init
  */
-require('dotenv').config();
-const fs = require('fs');
-const path = require('path');
-const bcrypt = require('bcryptjs');
-const pool = require('../src/config/db');
-const logger = require('../src/config/logger');
+import 'dotenv/config';
+import fs from 'fs';
+import path from 'path';
+import bcrypt from 'bcryptjs';
+import pool from '../src/config/db';
+import logger from '../src/config/logger';
 
 // Turns a connection error into a message that says what to fix
-function describeError(err) {
+function describeError(err: any): string {
   const code = err.code || (err.errors && err.errors[0] && err.errors[0].code);
   if (code === 'ECONNREFUSED') {
     return 'Cannot connect to PostgreSQL. Make sure the PostgreSQL service is running.';
@@ -51,7 +51,8 @@ async function createAdmin() {
 
 async function init() {
   try {
-    const sql = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8');
+    // read schema.sql from the database folder (run from the server folder)
+    const sql = fs.readFileSync(path.join(process.cwd(), 'database', 'schema.sql'), 'utf8');
     await pool.query(sql);
     logger.info('Tables created');
     await createAdmin();

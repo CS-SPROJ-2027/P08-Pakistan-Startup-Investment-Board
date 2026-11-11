@@ -2,19 +2,24 @@
  * UC-001: Login page.
  * Only approved accounts can log in. Pending or rejected users see a message.
  */
-import { useState } from 'react';
+import { useState, FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { apiRequest } from '../api';
+import { User } from '../types';
 import { saveLogin } from '../auth';
 
-function Login({ onLogin }) {
+interface Props {
+  onLogin: (user: User) => void;
+}
+
+function Login({ onLogin }: Props) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError('');
     setLoading(true);
@@ -24,7 +29,7 @@ function Login({ onLogin }) {
       onLogin(data.user);
       navigate(data.user.role === 'admin' ? '/admin/users' : '/dashboard');
     } catch (err) {
-      setError(err.message);
+      setError((err as Error).message);
     } finally {
       setLoading(false);
     }
