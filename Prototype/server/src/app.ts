@@ -11,6 +11,7 @@ import { notFound, errorHandler } from './middleware/errorHandler';
 import authRoutes from './routes/authRoutes';
 import adminRoutes from './routes/adminRoutes';
 import profileRoutes from './routes/profileRoutes';
+import accessRoutes from './routes/accessRoutes';
 
 const app = express();
 
@@ -30,6 +31,7 @@ app.get('/api/health', async (req, res, next) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/profile', profileRoutes);
+app.use('/api/access', accessRoutes);
 
 app.use('/api', notFound);
 

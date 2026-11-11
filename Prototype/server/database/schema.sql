@@ -48,3 +48,24 @@ CREATE TABLE IF NOT EXISTS profile_versions (
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   UNIQUE (profile_id, version_number)
 );
+
+-- UC-010: Manage Consent and Data Room Access
+-- a founder shares their startup with an investor or incubator organisation
+CREATE TABLE IF NOT EXISTS access_grants (
+  id SERIAL PRIMARY KEY,
+  profile_id INTEGER NOT NULL REFERENCES startup_profiles(id),
+  organisation VARCHAR(150) NOT NULL,
+  organisation_type VARCHAR(20) NOT NULL CHECK (organisation_type IN ('investor', 'incubator')),
+  granted_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  revoked_at TIMESTAMP
+);
+
+-- record of grants, revokes and views
+CREATE TABLE IF NOT EXISTS audit_log (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES users(id),
+  action VARCHAR(50) NOT NULL,
+  profile_id INTEGER REFERENCES startup_profiles(id),
+  details VARCHAR(300),
+  created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);

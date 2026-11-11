@@ -18,6 +18,7 @@ function Navbar({ user, onLogout }: Props) {
         <>
           <Link to="/dashboard">Dashboard</Link>
           {user.role === 'founder' && <Link to="/profile">My Profile</Link>}
+          {user.role === 'founder' && <Link to="/access">Access</Link>}
           {user.role === 'admin' && <Link to="/admin/users">Approve Accounts</Link>}
           <span className="nav-user">{user.fullName} ({user.role})</span>
           <button className="nav-button" onClick={onLogout}>Logout</button>

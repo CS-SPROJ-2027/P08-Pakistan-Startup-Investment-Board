@@ -13,6 +13,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import AdminUsers from './pages/AdminUsers';
 import StartupProfile from './pages/StartupProfile';
+import AccessSettings from './pages/AccessSettings';
 import NotFound from './pages/NotFound';
 import { getSavedUser, clearLogin } from './auth';
 import { User } from './types';
@@ -56,6 +57,14 @@ function App() {
             element={
               <ProtectedRoute user={user} roles={['founder']}>
                 <StartupProfile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/access"
+            element={
+              <ProtectedRoute user={user} roles={['founder']}>
+                <AccessSettings />
               </ProtectedRoute>
             }
           />
