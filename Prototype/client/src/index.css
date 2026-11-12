@@ -178,3 +178,14 @@ button.secondary {
   border: 1px solid #c9d8e8;
   border-radius: 4px;
 }
+
+.filters {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0 16px;
+  margin-bottom: 0;
+}
+
+.filters label {
+  margin-top: 8px;
+}

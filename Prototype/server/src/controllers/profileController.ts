@@ -13,6 +13,7 @@ import {
   Profile,
   SECTORS,
   STAGES,
+  CITIES,
   INSTRUMENTS,
   getMissingFields,
   getCompleteness,
@@ -25,6 +26,7 @@ function rowToProfile(row: any): Profile {
     companyName: row.company_name || '',
     sector: row.sector || '',
     stage: row.stage || '',
+    city: row.city || '',
     team: row.team,
     activeCustomers: row.active_customers,
     tractionNotes: row.traction_notes || '',
@@ -59,6 +61,7 @@ function cleanProfile(body: any): Profile {
     companyName: toText(body.companyName),
     sector: toText(body.sector),
     stage: toText(body.stage),
+    city: toText(body.city),
     team: [],
     activeCustomers: toNumber(body.activeCustomers, 'Active customers'),
     tractionNotes: toText(body.tractionNotes),
@@ -75,6 +78,9 @@ function cleanProfile(body: any): Profile {
   }
   if (profile.stage && !STAGES.includes(profile.stage)) {
     throw new AppError(400, 'Please select a valid stage');
+  }
+  if (profile.city && !CITIES.includes(profile.city)) {
+    throw new AppError(400, 'Please select a valid city');
   }
   if (profile.roundInstrument && !INSTRUMENTS.includes(profile.roundInstrument)) {
     throw new AppError(400, 'Please select a valid round instrument');
@@ -161,8 +167,8 @@ export async function saveDraft(req: AuthRequest, res: Response, next: NextFunct
          company_name = $1, sector = $2, stage = $3, team = $4, active_customers = $5,
          traction_notes = $6, revenue_period = $7, monthly_revenue_pkr = $8, cap_table = $9,
          round_amount_pkr = $10, round_instrument = $11, use_of_funds = $12,
-         completeness = $13, status = 'draft', updated_at = NOW()
-       WHERE founder_id = $14
+         completeness = $13, city = $14, status = 'draft', updated_at = NOW()
+       WHERE founder_id = $15
        RETURNING *`,
       [
         profile.companyName,
@@ -178,6 +184,7 @@ export async function saveDraft(req: AuthRequest, res: Response, next: NextFunct
         profile.roundInstrument || null,
         profile.useOfFunds,
         completeness,
+        profile.city || null,
         req.user?.id,
       ]
     );

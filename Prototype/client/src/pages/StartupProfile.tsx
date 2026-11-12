@@ -9,6 +9,7 @@ import {
   Profile,
   SECTORS,
   STAGES,
+  CITIES,
   INSTRUMENTS,
   getCompleteness,
   getCapTableTotal,
@@ -186,6 +187,14 @@ function StartupProfile() {
             <option value="">Select stage</option>
             {STAGES.map((stage) => (
               <option key={stage}>{stage}</option>
+            ))}
+          </select>
+
+          <label htmlFor="city">City</label>
+          <select id="city" value={profile.city} onChange={(e) => updateProfile({ city: e.target.value })}>
+            <option value="">Select city</option>
+            {CITIES.map((city) => (
+              <option key={city}>{city}</option>
             ))}
           </select>
         </div>

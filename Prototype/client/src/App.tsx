@@ -14,6 +14,8 @@ import Dashboard from './pages/Dashboard';
 import AdminUsers from './pages/AdminUsers';
 import StartupProfile from './pages/StartupProfile';
 import AccessSettings from './pages/AccessSettings';
+import SharedStartups from './pages/SharedStartups';
+import StartupDetails from './pages/StartupDetails';
 import NotFound from './pages/NotFound';
 import { getSavedUser, clearLogin } from './auth';
 import { User } from './types';
@@ -65,6 +67,22 @@ function App() {
             element={
               <ProtectedRoute user={user} roles={['founder']}>
                 <AccessSettings />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/startups"
+            element={
+              <ProtectedRoute user={user} roles={['investor', 'incubator']}>
+                <SharedStartups />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/startups/:id"
+            element={
+              <ProtectedRoute user={user} roles={['investor', 'incubator']}>
+                <StartupDetails />
               </ProtectedRoute>
             }
           />

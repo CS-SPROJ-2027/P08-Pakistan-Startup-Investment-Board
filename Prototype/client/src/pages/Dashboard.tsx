@@ -43,6 +43,9 @@ function Dashboard({ user }: Props) {
       <div className="card">
         <h2>Welcome, {user.fullName}</h2>
         <p>You are logged in as: {user.role}</p>
+        {(user.role === 'investor' || user.role === 'incubator') && (
+          <Link to="/startups">See startups shared with your organisation</Link>
+        )}
       </div>
 
       {user.role === 'founder' && (

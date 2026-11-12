@@ -6,6 +6,7 @@
 
 export const SECTORS = ['Agritech', 'Edtech', 'E-commerce', 'Fintech', 'Healthtech', 'Logistics', 'SaaS', 'Other'];
 export const STAGES = ['Idea', 'Pre-seed', 'Seed', 'Series A'];
+export const CITIES = ['Islamabad', 'Karachi', 'Lahore', 'Peshawar', 'Quetta', 'Faisalabad', 'Multan', 'Other'];
 export const INSTRUMENTS = ['Equity', 'SAFE', 'Convertible note', 'Grant'];
 
 export interface TeamMember {
@@ -22,6 +23,7 @@ export interface Profile {
   companyName: string;
   sector: string;
   stage: string;
+  city: string;
   team: TeamMember[];
   activeCustomers: number | null;
   tractionNotes: string;

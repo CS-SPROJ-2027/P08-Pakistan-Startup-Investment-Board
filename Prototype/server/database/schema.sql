@@ -69,3 +69,6 @@ CREATE TABLE IF NOT EXISTS audit_log (
   details VARCHAR(300),
   created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
+
+-- UC-014: city is used to filter startups on the investor dashboard
+ALTER TABLE startup_profiles ADD COLUMN IF NOT EXISTS city VARCHAR(50);
