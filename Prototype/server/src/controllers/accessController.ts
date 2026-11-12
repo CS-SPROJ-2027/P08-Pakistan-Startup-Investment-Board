@@ -21,6 +21,7 @@ async function getFounderProfile(founderId?: number) {
   return result.rows[0];
 }
 
+// Returns current grants, organisations to share with and the activity log
 export async function getAccessPage(req: AuthRequest, res: Response, next: NextFunction) {
   try {
     const profile = await getFounderProfile(req.user?.id);
@@ -68,6 +69,7 @@ export async function getAccessPage(req: AuthRequest, res: Response, next: NextF
   }
 }
 
+// Gives an organisation access to the founder's startup
 export async function grantAccess(req: AuthRequest, res: Response, next: NextFunction) {
   try {
     const profile = await getFounderProfile(req.user?.id);
@@ -112,6 +114,7 @@ export async function grantAccess(req: AuthRequest, res: Response, next: NextFun
   }
 }
 
+// Removes an organisation's access to the founder's startup
 export async function revokeAccess(req: AuthRequest, res: Response, next: NextFunction) {
   try {
     const profile = await getFounderProfile(req.user?.id);

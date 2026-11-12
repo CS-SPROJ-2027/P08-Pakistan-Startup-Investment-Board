@@ -17,6 +17,7 @@ export interface AuthRequest extends Request {
   user?: TokenUser;
 }
 
+// Checks the login token and saves the user's id and role on the request
 export function verifyToken(req: AuthRequest, res: Response, next: NextFunction) {
   const header = req.headers.authorization;
   if (!header || !header.startsWith('Bearer ')) {
@@ -34,6 +35,7 @@ export function verifyToken(req: AuthRequest, res: Response, next: NextFunction)
   }
 }
 
+// Only lets users with one of the given roles continue
 export function requireRole(...roles: string[]) {
   return (req: AuthRequest, res: Response, next: NextFunction) => {
     if (!req.user || !roles.includes(req.user.role)) {

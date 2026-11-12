@@ -51,6 +51,7 @@ function toNumber(value: any, label: string): number | null {
   return Math.round(number);
 }
 
+// Returns trimmed text, or an empty string if the value is not text
 function toText(value: any): string {
   return typeof value === 'string' ? value.trim() : '';
 }
@@ -136,6 +137,7 @@ async function buildResponse(row: any) {
   };
 }
 
+// Returns the founder's profile, creating an empty draft on the first visit
 export async function getMyProfile(req: AuthRequest, res: Response, next: NextFunction) {
   try {
     let result = await pool.query('SELECT * FROM startup_profiles WHERE founder_id = $1', [req.user?.id]);
@@ -156,6 +158,7 @@ export async function getMyProfile(req: AuthRequest, res: Response, next: NextFu
   }
 }
 
+// Saves the profile as a draft (used by autosave and the Save draft button)
 export async function saveDraft(req: AuthRequest, res: Response, next: NextFunction) {
   try {
     const profile = cleanProfile(req.body);
@@ -199,6 +202,7 @@ export async function saveDraft(req: AuthRequest, res: Response, next: NextFunct
   }
 }
 
+// Checks the mandatory fields, saves a new version and marks it ready for review
 export async function submitProfile(req: AuthRequest, res: Response, next: NextFunction) {
   try {
     const result = await pool.query('SELECT * FROM startup_profiles WHERE founder_id = $1', [req.user?.id]);

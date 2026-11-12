@@ -38,6 +38,7 @@ function validateRegistration(data: any): string | null {
   return null;
 }
 
+// Creates a new pending account after checking the form and the email
 export async function register(req: Request, res: Response, next: NextFunction) {
   try {
     const errorMessage = validateRegistration(req.body);
@@ -69,6 +70,7 @@ export async function register(req: Request, res: Response, next: NextFunction) 
   }
 }
 
+// Checks email and password, and only lets approved accounts log in
 export async function login(req: Request, res: Response, next: NextFunction) {
   try {
     const { email, password } = req.body;
@@ -90,7 +92,7 @@ export async function login(req: Request, res: Response, next: NextFunction) {
     }
 
     const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET as string, {
-      expiresIn: '8h',
+      expiresIn: (process.env.JWT_EXPIRES_IN || '8h') as jwt.SignOptions['expiresIn'],
     });
 
     logger.info(`User logged in: ${user.email}`);
@@ -103,6 +105,7 @@ export async function login(req: Request, res: Response, next: NextFunction) {
   }
 }
 
+// Returns the details of the logged in user
 export async function getMe(req: AuthRequest, res: Response, next: NextFunction) {
   try {
     const result = await pool.query(

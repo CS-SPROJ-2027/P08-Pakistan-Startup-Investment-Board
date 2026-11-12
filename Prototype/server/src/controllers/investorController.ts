@@ -23,9 +23,13 @@ const SHARED_STARTUPS_SQL = `
     AND v.version_number = (SELECT MAX(version_number) FROM profile_versions WHERE profile_id = p.id)
 `;
 
+// Lists the shared startups, with optional filters and sorting
 export async function getSharedStartups(req: AuthRequest, res: Response, next: NextFunction) {
   try {
     const { sector, stage, city, minRound, maxRound, sort } = req.query;
+    if ((minRound && Number.isNaN(Number(minRound))) || (maxRound && Number.isNaN(Number(maxRound)))) {
+      throw new AppError(400, 'Round size filters must be numbers');
+    }
     const result = await pool.query(SHARED_STARTUPS_SQL, [req.user?.id]);
 
     let startups = result.rows.map((row) => ({
@@ -74,6 +78,7 @@ export async function getSharedStartups(req: AuthRequest, res: Response, next: N
   }
 }
 
+// Returns one shared startup and saves the view in the audit log
 export async function getStartupDetails(req: AuthRequest, res: Response, next: NextFunction) {
   try {
     const profileId = Number(req.params.id);

@@ -11,6 +11,7 @@ import { AuthRequest } from '../middleware/auth';
 
 const STATUSES = ['pending', 'approved', 'rejected'];
 
+// Lists accounts with the given status (pending by default)
 export async function getUsers(req: AuthRequest, res: Response, next: NextFunction) {
   try {
     const status = (req.query.status as string) || 'pending';
@@ -33,6 +34,7 @@ export async function getUsers(req: AuthRequest, res: Response, next: NextFuncti
   }
 }
 
+// Approves or rejects a pending account
 export async function reviewUser(req: AuthRequest, res: Response, next: NextFunction) {
   try {
     const userId = Number(req.params.id);
