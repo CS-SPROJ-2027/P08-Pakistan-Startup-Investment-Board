@@ -13,6 +13,7 @@ import adminRoutes from './routes/adminRoutes';
 import profileRoutes from './routes/profileRoutes';
 import accessRoutes from './routes/accessRoutes';
 import investorRoutes from './routes/investorRoutes';
+import documentRoutes from './routes/documentRoutes';
 
 const app = express();
 
@@ -34,6 +35,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/access', accessRoutes);
 app.use('/api/startups', investorRoutes);
+app.use('/api/documents', documentRoutes);
 
 app.use('/api', notFound);
 

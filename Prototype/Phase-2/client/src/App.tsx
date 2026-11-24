@@ -16,6 +16,8 @@ import StartupProfile from './pages/StartupProfile';
 import AccessSettings from './pages/AccessSettings';
 import SharedStartups from './pages/SharedStartups';
 import StartupDetails from './pages/StartupDetails';
+import DataRoom from './pages/DataRoom';
+import AdminQuarantine from './pages/AdminQuarantine';
 import NotFound from './pages/NotFound';
 import { getSavedUser, clearLogin } from './auth';
 import { User } from './types';
@@ -59,6 +61,22 @@ function App() {
             element={
               <ProtectedRoute user={user} roles={['founder']}>
                 <StartupProfile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/data-room"
+            element={
+              <ProtectedRoute user={user} roles={['founder']}>
+                <DataRoom />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/quarantine"
+            element={
+              <ProtectedRoute user={user} roles={['admin']}>
+                <AdminQuarantine />
               </ProtectedRoute>
             }
           />

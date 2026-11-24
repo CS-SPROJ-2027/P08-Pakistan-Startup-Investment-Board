@@ -68,6 +68,9 @@ function Dashboard({ user }: Props) {
           <p>
             <Link to="/profile">Go to my startup profile</Link>
           </p>
+          <p>
+            <Link to="/data-room">Upload documents to my data room</Link>
+          </p>
         </div>
       )}
     </div>

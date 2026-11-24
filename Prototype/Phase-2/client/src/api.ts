@@ -2,6 +2,7 @@
  * API helper.
  * Sends requests to the backend and returns the JSON response.
  * Throws an ApiError with the server's message if the request fails.
+ * The body can be an object (sent as JSON) or FormData (for file uploads).
  */
 export class ApiError extends Error {
   data: any;
@@ -12,8 +13,13 @@ export class ApiError extends Error {
   }
 }
 
-export async function apiRequest(url: string, method = 'GET', body?: object) {
-  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+export async function apiRequest(url: string, method = 'GET', body?: object | FormData) {
+  const isFile = body instanceof FormData;
+  const headers: Record<string, string> = {};
+  // for FormData the browser sets the content type itself
+  if (!isFile) {
+    headers['Content-Type'] = 'application/json';
+  }
 
   const token = localStorage.getItem('token');
   if (token) {
@@ -25,7 +31,7 @@ export async function apiRequest(url: string, method = 'GET', body?: object) {
     response = await fetch(`/api${url}`, {
       method,
       headers,
-      body: body ? JSON.stringify(body) : undefined,
+      body: isFile ? body : body ? JSON.stringify(body) : undefined,
     });
   } catch {
     throw new ApiError('Could not connect to the server. Is it running?', {});

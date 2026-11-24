@@ -31,6 +31,10 @@ export function errorHandler(err: any, req: Request, res: Response, next: NextFu
   if (err.type === 'entity.parse.failed') {
     return res.status(400).json({ error: 'Request body is not valid JSON' });
   }
+  // file upload over the size limit (UC-005)
+  if (err.code === 'LIMIT_FILE_SIZE') {
+    return res.status(400).json({ error: 'The file is larger than 25 MB' });
+  }
   // PostgreSQL error codes
   if (err.code === '23505') {
     return res.status(409).json({ error: 'This record already exists' });

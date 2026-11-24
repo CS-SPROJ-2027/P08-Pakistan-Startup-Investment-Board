@@ -72,3 +72,35 @@ CREATE TABLE IF NOT EXISTS audit_log (
 
 -- UC-014: city is used to filter startups on the investor dashboard
 ALTER TABLE startup_profiles ADD COLUMN IF NOT EXISTS city VARCHAR(50);
+
+-- UC-005: Upload Data Room Documents
+-- files are stored encrypted in the database (file_data, iv and auth_tag are needed to decrypt)
+CREATE TABLE IF NOT EXISTS documents (
+  id SERIAL PRIMARY KEY,
+  profile_id INTEGER NOT NULL REFERENCES startup_profiles(id),
+  doc_type VARCHAR(30) NOT NULL,
+  file_name VARCHAR(255) NOT NULL,
+  file_size INTEGER NOT NULL,
+  version INTEGER NOT NULL,
+  status VARCHAR(20) NOT NULL CHECK (status IN ('stored', 'quarantined')),
+  extraction_status VARCHAR(20) NOT NULL CHECK (extraction_status IN ('extracted', 'not_extracted')),
+  extractor_version VARCHAR(20),
+  file_data BYTEA NOT NULL,
+  iv BYTEA NOT NULL,
+  auth_tag BYTEA NOT NULL,
+  uploaded_by INTEGER NOT NULL REFERENCES users(id),
+  uploaded_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+-- values found in a document, with the sheet and cell they came from
+-- 'verify' values must be confirmed by the founder before they are used
+CREATE TABLE IF NOT EXISTS extracted_fields (
+  id SERIAL PRIMARY KEY,
+  document_id INTEGER NOT NULL REFERENCES documents(id),
+  field_name VARCHAR(30) NOT NULL,
+  value NUMERIC NOT NULL,
+  source VARCHAR(100) NOT NULL,
+  confidence NUMERIC(3, 2) NOT NULL,
+  status VARCHAR(20) NOT NULL CHECK (status IN ('accepted', 'verify', 'confirmed')),
+  confirmed_at TIMESTAMP
+);
