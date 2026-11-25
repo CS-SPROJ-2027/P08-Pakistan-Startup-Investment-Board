@@ -104,3 +104,41 @@ CREATE TABLE IF NOT EXISTS extracted_fields (
   status VARCHAR(20) NOT NULL CHECK (status IN ('accepted', 'verify', 'confirmed')),
   confirmed_at TIMESTAMP
 );
+
+-- UC-006: Run Readiness and Consistency Check
+-- ratings and flags are saved as JSON so every report keeps exactly what was shown
+CREATE TABLE IF NOT EXISTS readiness_reports (
+  id SERIAL PRIMARY KEY,
+  profile_id INTEGER NOT NULL REFERENCES startup_profiles(id),
+  rubric_version VARCHAR(10) NOT NULL,
+  documents_checked BOOLEAN NOT NULL,
+  ratings JSONB NOT NULL,
+  flags JSONB NOT NULL,
+  created_by INTEGER NOT NULL REFERENCES users(id),
+  created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+-- a founder can dispute a rating; the administrator overrides it or keeps it, with a reason
+CREATE TABLE IF NOT EXISTS rating_disputes (
+  id SERIAL PRIMARY KEY,
+  report_id INTEGER NOT NULL REFERENCES readiness_reports(id),
+  category VARCHAR(30) NOT NULL,
+  reason VARCHAR(500) NOT NULL,
+  status VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'overridden', 'kept')),
+  new_rating INTEGER,
+  admin_reason VARCHAR(500),
+  reviewed_by INTEGER REFERENCES users(id),
+  reviewed_at TIMESTAMP,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+-- UC-015: Compare Startups Side by Side
+-- comparisons saved to an organisation's shortlist (profile_ids is a list of startup ids)
+CREATE TABLE IF NOT EXISTS shortlists (
+  id SERIAL PRIMARY KEY,
+  organisation VARCHAR(150) NOT NULL,
+  name VARCHAR(100) NOT NULL,
+  profile_ids JSONB NOT NULL,
+  created_by INTEGER NOT NULL REFERENCES users(id),
+  created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);

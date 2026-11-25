@@ -189,3 +189,13 @@ button.secondary {
 .filters label {
   margin-top: 8px;
 }
+
+/* UC-015 compare page */
+input.checkbox {
+  width: auto;
+}
+
+td.best {
+  background-color: #e3f4e8;
+  font-weight: bold;
+}

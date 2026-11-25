@@ -71,6 +71,9 @@ function Dashboard({ user }: Props) {
           <p>
             <Link to="/data-room">Upload documents to my data room</Link>
           </p>
+          <p>
+            <Link to="/readiness">Run a readiness check</Link>
+          </p>
         </div>
       )}
     </div>

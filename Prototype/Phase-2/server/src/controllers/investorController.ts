@@ -10,9 +10,10 @@ import logger from '../config/logger';
 import { AppError } from '../middleware/errorHandler';
 import { AuthRequest } from '../middleware/auth';
 import { logAction } from '../utils/auditLog';
+import { getLatestReport } from './readinessController';
 
 // latest submitted version of every startup shared with the user's organisation
-const SHARED_STARTUPS_SQL = `
+export const SHARED_STARTUPS_SQL = `
   SELECT p.id, g.granted_at, v.version_number, v.data, v.created_at AS submitted_at, u.organisation
   FROM access_grants g
   JOIN startup_profiles p ON p.id = g.profile_id
@@ -102,6 +103,8 @@ export async function getStartupDetails(req: AuthRequest, res: Response, next: N
       version: row.version_number,
       submittedAt: row.submitted_at,
       profile: row.data,
+      // UC-006: latest readiness report, with flags and the founder's explanations
+      readiness: await getLatestReport(profileId),
     });
   } catch (err) {
     next(err);

@@ -1,9 +1,10 @@
 /**
  * UC-014: Investor dashboard listing the startups shared with the user's organisation.
  * Startups can be filtered by sector, stage, city and round size, and sorted.
+ * UC-015: 2 to 4 startups can be selected and compared, and saved shortlists are listed.
  */
 import { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { apiRequest } from '../api';
 import { SECTORS, STAGES, CITIES } from '../profileRules';
 
@@ -18,6 +19,15 @@ interface StartupRow {
   sharedAt: string;
 }
 
+interface Shortlist {
+  id: number;
+  name: string;
+  ids: number[];
+  companies: string[];
+  createdBy: string;
+  createdAt: string;
+}
+
 const emptyFilters = { sector: '', stage: '', city: '', minRound: '', maxRound: '', sort: 'newest' };
 
 function SharedStartups() {
@@ -26,6 +36,10 @@ function SharedStartups() {
   const [total, setTotal] = useState(0);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
+  const [selected, setSelected] = useState<number[]>([]);
+  const [compareError, setCompareError] = useState('');
+  const [shortlists, setShortlists] = useState<Shortlist[]>([]);
+  const navigate = useNavigate();
 
   // message passed from the details page when access was removed
   const location = useLocation();
@@ -42,6 +56,26 @@ function SharedStartups() {
       .catch((err: Error) => setError(err.message))
       .finally(() => setLoading(false));
   }, [filters]);
+
+  useEffect(() => {
+    apiRequest('/startups/shortlists')
+      .then((data) => setShortlists(data.shortlists))
+      .catch((err: Error) => setError(err.message));
+  }, []);
+
+  // ticks or unticks a startup for comparison
+  function toggleSelected(id: number) {
+    setCompareError('');
+    setSelected(selected.includes(id) ? selected.filter((i) => i !== id) : [...selected, id]);
+  }
+
+  // E2: only 2 to 4 startups can be compared
+  function openComparison() {
+    if (selected.length < 2 || selected.length > 4) {
+      return setCompareError('Please select 2 to 4 startups to compare');
+    }
+    navigate(`/compare?ids=${selected.join(',')}`);
+  }
 
   function changeFilter(name: string, value: string) {
     setFilters({ ...filters, [name]: value });
@@ -113,6 +147,13 @@ function SharedStartups() {
           <p>
             Showing {startups.length} of {total} startups
           </p>
+          {total > 0 && (
+            <p>
+              <button onClick={openComparison}>Compare selected ({selected.length})</button>
+              <span className="muted"> Tick 2 to 4 startups to compare them.</span>
+            </p>
+          )}
+          {compareError && <p className="error">{compareError}</p>}
           {total === 0 ? (
             <p className="muted">No startups have been shared with your organisation yet.</p>
           ) : startups.length === 0 ? (
@@ -121,6 +162,7 @@ function SharedStartups() {
             <table>
               <thead>
                 <tr>
+                  <th>Compare</th>
                   <th>Company</th>
                   <th>Sector</th>
                   <th>Stage</th>
@@ -133,6 +175,15 @@ function SharedStartups() {
               <tbody>
                 {startups.map((startup) => (
                   <tr key={startup.id}>
+                    <td>
+                      <input
+                        type="checkbox"
+                        className="checkbox"
+                        aria-label={`Compare ${startup.companyName}`}
+                        checked={selected.includes(startup.id)}
+                        onChange={() => toggleSelected(startup.id)}
+                      />
+                    </td>
                     <td>{startup.companyName}</td>
                     <td>{startup.sector}</td>
                     <td>{startup.stage}</td>
@@ -149,6 +200,38 @@ function SharedStartups() {
           )}
         </>
       )}
+
+      <div className="card">
+        <h3>Saved shortlists</h3>
+        {shortlists.length === 0 ? (
+          <p className="muted">Your organisation has not saved any comparisons yet.</p>
+        ) : (
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Startups</th>
+                <th>Saved by</th>
+                <th>Date</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {shortlists.map((list) => (
+                <tr key={list.id}>
+                  <td>{list.name}</td>
+                  <td>{list.companies.join(', ')}</td>
+                  <td>{list.createdBy}</td>
+                  <td>{new Date(list.createdAt).toLocaleDateString()}</td>
+                  <td>
+                    <Link to={`/compare?ids=${list.ids.join(',')}`}>Open</Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
     </div>
   );
 }

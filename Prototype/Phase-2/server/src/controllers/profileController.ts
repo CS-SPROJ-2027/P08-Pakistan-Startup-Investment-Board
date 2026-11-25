@@ -21,7 +21,7 @@ import {
 } from '../utils/profileRules';
 
 // Converts a database row into the profile object used by the app
-function rowToProfile(row: any): Profile {
+export function rowToProfile(row: any): Profile {
   return {
     companyName: row.company_name || '',
     sector: row.sector || '',

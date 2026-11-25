@@ -6,12 +6,14 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { apiRequest, ApiError } from '../api';
 import { Profile } from '../profileRules';
+import { ReadinessReport } from '../types';
 
 function StartupDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [version, setVersion] = useState(0);
+  const [readiness, setReadiness] = useState<ReadinessReport | null>(null);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -19,6 +21,7 @@ function StartupDetails() {
       .then((data) => {
         setProfile(data.profile);
         setVersion(data.version);
+        setReadiness(data.readiness);
       })
       .catch((err) => {
         // access was revoked: go back to the list and show why
@@ -93,6 +96,52 @@ function StartupDetails() {
         <p>Raising: PKR {profile.roundAmount?.toLocaleString()}</p>
         <p>Instrument: {profile.roundInstrument}</p>
         {profile.useOfFunds && <p>Use of funds: {profile.useOfFunds}</p>}
+      </div>
+
+      <div className="card">
+        <h3>Readiness</h3>
+        {!readiness ? (
+          <p className="muted">The founder has not run a readiness check yet.</p>
+        ) : (
+          <>
+            <p className="muted">
+              Report from {new Date(readiness.createdAt).toLocaleDateString()}, rubric version {readiness.rubricVersion}
+              {!readiness.documentsChecked && ' – Documents not checked'}
+            </p>
+            <table>
+              <thead>
+                <tr>
+                  <th>Category</th>
+                  <th>Rating</th>
+                  <th>Criteria missing</th>
+                </tr>
+              </thead>
+              <tbody>
+                {readiness.ratings.map((r) => (
+                  <tr key={r.category}>
+                    <td>{r.category}</td>
+                    <td>{r.rating === null ? 'Not assessed' : `${r.rating} / 5 (${r.description})`}</td>
+                    <td>{r.missing.join(', ') || '-'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            <h3>Flags</h3>
+            {readiness.flags.length === 0 ? (
+              <p className="muted">No flags.</p>
+            ) : (
+              <ul>
+                {readiness.flags.map((flag, index) => (
+                  <li key={index}>
+                    <strong>{flag.severity}</strong>: {flag.message} ({flag.source})
+                    {flag.explanation && <div className="muted">Founder's explanation: {flag.explanation}</div>}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </>
+        )}
       </div>
     </div>
   );

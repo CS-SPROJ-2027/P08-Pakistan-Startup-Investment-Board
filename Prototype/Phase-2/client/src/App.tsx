@@ -18,6 +18,9 @@ import SharedStartups from './pages/SharedStartups';
 import StartupDetails from './pages/StartupDetails';
 import DataRoom from './pages/DataRoom';
 import AdminQuarantine from './pages/AdminQuarantine';
+import Readiness from './pages/Readiness';
+import AdminDisputes from './pages/AdminDisputes';
+import Compare from './pages/Compare';
 import NotFound from './pages/NotFound';
 import { getSavedUser, clearLogin } from './auth';
 import { User } from './types';
@@ -69,6 +72,30 @@ function App() {
             element={
               <ProtectedRoute user={user} roles={['founder']}>
                 <DataRoom />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/compare"
+            element={
+              <ProtectedRoute user={user} roles={['investor', 'incubator']}>
+                <Compare />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/readiness"
+            element={
+              <ProtectedRoute user={user} roles={['founder']}>
+                <Readiness />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/disputes"
+            element={
+              <ProtectedRoute user={user} roles={['admin']}>
+                <AdminDisputes />
               </ProtectedRoute>
             }
           />
