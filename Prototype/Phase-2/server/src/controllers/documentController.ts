@@ -149,9 +149,17 @@ export async function uploadDocument(req: AuthRequest, res: Response, next: Next
     // values below 0.7 confidence are marked "Verify"
     for (const field of fields) {
       await pool.query(
-        `INSERT INTO extracted_fields (document_id, field_name, value, source, confidence, status)
-         VALUES ($1, $2, $3, $4, $5, $6)`,
-        [documentId, field.fieldName, field.value, field.source, field.confidence, field.confidence < 0.7 ? 'verify' : 'accepted']
+        `INSERT INTO extracted_fields (document_id, field_name, value, source, confidence, status, series)
+         VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+        [
+          documentId,
+          field.fieldName,
+          field.value,
+          field.source,
+          field.confidence,
+          field.confidence < 0.7 ? 'verify' : 'accepted',
+          JSON.stringify(field.series),
+        ]
       );
     }
 

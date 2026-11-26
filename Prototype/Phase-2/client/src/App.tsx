@@ -21,6 +21,8 @@ import AdminQuarantine from './pages/AdminQuarantine';
 import Readiness from './pages/Readiness';
 import AdminDisputes from './pages/AdminDisputes';
 import Compare from './pages/Compare';
+import Memo from './pages/Memo';
+import Evidence from './pages/Evidence';
 import NotFound from './pages/NotFound';
 import { getSavedUser, clearLogin } from './auth';
 import { User } from './types';
@@ -72,6 +74,22 @@ function App() {
             element={
               <ProtectedRoute user={user} roles={['founder']}>
                 <DataRoom />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/startups/:id/memo"
+            element={
+              <ProtectedRoute user={user} roles={['investor', 'incubator']}>
+                <Memo />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/startups/:id/documents/:documentId"
+            element={
+              <ProtectedRoute user={user} roles={['investor', 'incubator']}>
+                <Evidence />
               </ProtectedRoute>
             }
           />

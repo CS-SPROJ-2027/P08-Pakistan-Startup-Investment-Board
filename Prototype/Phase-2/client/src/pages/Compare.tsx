@@ -166,7 +166,7 @@ function Compare() {
                   <th key={s.id}>
                     {s.companyName}
                     <div>
-                      <Link to={`/startups/${s.id}`}>View</Link>{' '}
+                      <Link to={`/startups/${s.id}`}>View</Link> · <Link to={`/startups/${s.id}/memo`}>Memo</Link>{' '}
                       <button className="secondary" onClick={() => removeStartup(s.id)}>Remove</button>
                     </div>
                   </th>

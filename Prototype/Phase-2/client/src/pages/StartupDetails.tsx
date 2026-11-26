@@ -45,6 +45,9 @@ function StartupDetails() {
       <Link to="/startups">Back to shared startups</Link>
       <h2>{profile.companyName}</h2>
       <p className="muted">Submitted profile, version {version}</p>
+      <p>
+        <Link to={`/startups/${id}/memo`}>Open diligence memo</Link>
+      </p>
 
       <div className="card">
         <h3>Company</h3>

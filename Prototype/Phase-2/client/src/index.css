@@ -199,3 +199,10 @@ td.best {
   background-color: #e3f4e8;
   font-weight: bold;
 }
+
+/* UC-016 evidence page: the source cell */
+td.evidence {
+  background-color: #fff3b0;
+  outline: 2px solid #e0a800;
+  font-weight: bold;
+}

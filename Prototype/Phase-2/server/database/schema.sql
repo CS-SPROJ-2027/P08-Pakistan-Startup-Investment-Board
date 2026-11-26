@@ -142,3 +142,19 @@ CREATE TABLE IF NOT EXISTS shortlists (
   created_by INTEGER NOT NULL REFERENCES users(id),
   created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
+
+-- UC-016: Generate Diligence Memo
+-- monthly values of an extracted row, e.g. [{"value": 900000, "cell": "P&L!C3"}, ...]
+ALTER TABLE extracted_fields ADD COLUMN IF NOT EXISTS series JSONB;
+
+-- memos are saved so the same memo is not written again until the profile or data room changes
+CREATE TABLE IF NOT EXISTS memos (
+  id SERIAL PRIMARY KEY,
+  profile_id INTEGER NOT NULL REFERENCES startup_profiles(id),
+  profile_version INTEGER NOT NULL,
+  data_room_version INTEGER NOT NULL,
+  content JSONB NOT NULL,
+  narrative_method VARCHAR(10) NOT NULL CHECK (narrative_method IN ('ai', 'rules')),
+  model VARCHAR(50),
+  created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
