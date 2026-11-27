@@ -3,7 +3,7 @@
  */
 import express from 'express';
 import multer from 'multer';
-import { getDocuments, uploadDocument, downloadDocument, confirmField } from '../controllers/documentController';
+import { getDocuments, uploadDocument, downloadDocument, confirmField, downloadTemplate } from '../controllers/documentController';
 import { verifyToken, requireRole } from '../middleware/auth';
 import { MAX_FILE_SIZE } from '../utils/fileSecurity';
 
@@ -16,6 +16,7 @@ router.use(verifyToken, requireRole('founder'));
 
 router.get('/', getDocuments);
 router.post('/', upload.single('file'), uploadDocument);
+router.get('/template', downloadTemplate);
 router.get('/:id/download', downloadDocument);
 router.post('/fields/:id/confirm', confirmField);
 

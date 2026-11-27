@@ -21,6 +21,7 @@ import {
   decryptFile,
 } from '../utils/fileSecurity';
 import { EXTRACTOR_VERSION, extractFromSpreadsheet, ExtractedField } from '../utils/extractFields';
+import { buildTemplate } from '../utils/statementTemplate';
 
 export const DOCUMENT_TYPES = ['Financial statement', 'Incorporation document', 'Contract', 'Cap table'];
 
@@ -198,6 +199,18 @@ export async function downloadDocument(req: AuthRequest, res: Response, next: Ne
     const file = decryptFile(doc.file_data, doc.iv, doc.auth_tag);
     res.setHeader('Content-Type', getContentType(doc.file_name));
     res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(doc.file_name)}"`);
+    res.send(file);
+  } catch (err) {
+    next(err);
+  }
+}
+
+// Sends the financial statement template (XLSX) for founders to fill in
+export async function downloadTemplate(req: AuthRequest, res: Response, next: NextFunction) {
+  try {
+    const file = await buildTemplate();
+    res.setHeader('Content-Type', getContentType('template.xlsx'));
+    res.setHeader('Content-Disposition', 'attachment; filename="PSIB-financial-statement-template.xlsx"');
     res.send(file);
   } catch (err) {
     next(err);

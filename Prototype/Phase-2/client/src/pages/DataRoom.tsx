@@ -101,10 +101,10 @@ function DataRoom() {
     }
   }
 
-  // The download needs the login token, so the file is fetched and then saved
-  async function download(doc: Document) {
+  // Downloads need the login token, so the file is fetched and then saved
+  async function saveFile(address: string, fileName: string) {
     setError('');
-    const response = await fetch(`/api/documents/${doc.id}/download`, {
+    const response = await fetch(address, {
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
     });
     if (!response.ok) {
@@ -113,7 +113,7 @@ function DataRoom() {
     const url = URL.createObjectURL(await response.blob());
     const link = document.createElement('a');
     link.href = url;
-    link.download = doc.file_name;
+    link.download = fileName;
     link.click();
     URL.revokeObjectURL(url);
   }
@@ -159,6 +159,20 @@ function DataRoom() {
             <option key={type} value={type}>{type}</option>
           ))}
         </select>
+
+        {docType === 'Financial statement' && (
+          <p className="muted">
+            Please use our template so revenue, costs and cash can be read from your file. Other formats are stored but
+            may not be read.{' '}
+            <button
+              type="button"
+              className="secondary"
+              onClick={() => saveFile('/api/documents/template', 'PSIB-financial-statement-template.xlsx')}
+            >
+              Download template
+            </button>
+          </p>
+        )}
 
         <label htmlFor="file">File (PDF, XLSX or DOCX, max 25 MB)</label>
         <input
@@ -206,7 +220,7 @@ function DataRoom() {
                   </td>
                   <td>
                     {doc.status === 'stored' && (
-                      <button className="secondary" onClick={() => download(doc)}>Download</button>
+                      <button className="secondary" onClick={() => saveFile(`/api/documents/${doc.id}/download`, doc.file_name)}>Download</button>
                     )}
                   </td>
                 </tr>
