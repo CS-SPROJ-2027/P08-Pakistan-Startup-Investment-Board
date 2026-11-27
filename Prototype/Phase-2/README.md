@@ -5,6 +5,10 @@ Prototype of the Pakistan Startup Investment Board.
 - `client/` – React + TypeScript (Vite) frontend
 - `server/` – Node.js + TypeScript (Express) backend with a PostgreSQL database on Neon
 
+## Live demo
+
+https://psib-p08.onrender.com/
+
 Demo accounts are listed in `Readme-Prototype.txt`.
 
 ## Requirements
@@ -80,11 +84,12 @@ Without this the memo still works and uses the rule-based summary.
 
 ## Deployment (Render)
 
-The prototype can be hosted on Render as one web service (Node). The server serves the built React app.
+The live demo runs on Render as one web service (Node), deployed from the `main` branch. The server serves the built React app.
 
-- Root Directory: `Prototype`
+- Root Directory: `Prototype/Phase-2` (the folder that holds this README)
 - Build Command: `npm run build`
 - Start Command: `npm start` (creates or updates the database tables, then starts the server)
 - Environment variables: `DATABASE_URL`, `DATABASE_SSL=true`, `JWT_SECRET`, `JWT_EXPIRES_IN=8h`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`
 
 Ollama does not run on Render, so the hosted memo always uses the rule-based summary.
+On the free plan the site sleeps after about 15 minutes without visitors, so the first page load can take up to a minute.

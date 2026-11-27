@@ -93,7 +93,11 @@ LIST OF REQUIREMENTS COMPLETED IN THE PROTOTYPE (PHASE 2)
 HOW TO ACCESS THE PROTOTYPE
 
 
-Run the prototype locally (steps in Prototype/README.md), then open
+URL: https://psib-p08.onrender.com/
+
+The prototype is hosted on Render's free plan. If nobody has opened it for a
+while, the first page load can take up to a minute while the server starts.
+It can also be run locally (steps in README.md), then opened at
 http://localhost:5173
 
 Demo accounts:
@@ -138,8 +142,8 @@ ADDITIONAL INFORMATION
   (Node.js + Express + TypeScript) with a PostgreSQL database on Neon.
   Prototype/README.md explains how to run it locally.
 - The memo summary (UC-016) uses Ollama with the llama3.2:3b model when it is
-  installed and running (setup in Prototype/README.md). Without it the memo
-  still works and uses the rule-based summary.
+  installed and running locally (setup in README.md). Ollama does not run on
+  the hosted site, so there the memo uses the rule-based summary.
 - The malware scan is a simple check for the prototype (EICAR test file); a
   real scanner such as ClamAV would be used in the final system.
 - Planned for later sprints: email verification and MFA (UC-001), reading
