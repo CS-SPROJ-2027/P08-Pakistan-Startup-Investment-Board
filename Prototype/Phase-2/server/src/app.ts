@@ -5,6 +5,7 @@
  */
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
 import pool from './config/db';
 import { notFound, errorHandler } from './middleware/errorHandler';
 import authRoutes from './routes/authRoutes';
@@ -39,6 +40,14 @@ app.use('/api/documents', documentRoutes);
 app.use('/api/readiness', readinessRoutes);
 
 app.use('/api', notFound);
+
+// In production the built React app is served from client/dist
+// (the server is started from the server folder, so client is one level up)
+const clientDist = path.join(process.cwd(), '../client/dist');
+app.use(express.static(clientDist));
+app.get('*', (req, res) => {
+  res.sendFile(path.join(clientDist, 'index.html'));
+});
 
 app.use(errorHandler);
 
